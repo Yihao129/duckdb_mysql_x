@@ -2,6 +2,8 @@
 # duckdb v1.4.2 (v1.4-andium) - https://github.com/duckdb/duckdb-mysql/tree/v1.4-andium
 
 # compile env:
+worked in colab:
+
 /content/duckdb-mysql# ldd --version
 ldd (Ubuntu GLIBC 2.35-0ubuntu3.8) 2.35
 Copyright (C) 2022 Free Software Foundation, Inc.
@@ -23,6 +25,15 @@ export VCPKG_TOOLCHAIN_PATH=$(pwd)/scripts/buildsystems/vcpkg.cmake
 
 # changes
 1. attach with multiple databses and only scan thoses datanases. database=db1,db2...
+
+
+# steps:
+1. pull code.
+ cd /content/duckdb_mysql_x/ && git pull && rm -rf /content/duckdb-mysql/src/ && cp -r /content/duckdb_mysql_x/src/ /content/duckdb-mysql/ && cd /content/duckdb-mysql/
+
+
+
+
 
 
 
