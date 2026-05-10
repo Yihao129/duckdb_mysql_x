@@ -73,6 +73,7 @@ private:
 	vector<string> databases;
 	string connect_connection_string;
 	friend class MySQLSchemaSet;
+	friend class MySQLTransaction;
 };
 
 } // namespace duckdb
