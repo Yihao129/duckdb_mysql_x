@@ -1,0 +1,168 @@
+# name: test/sql/scan_datetime.test
+# description: Test scanning tables with datetime
+# group: [sql]
+
+require mysql_scanner
+
+require-env MYSQL_TEST_DATABASE_AVAILABLE
+
+require icu
+
+statement ok
+ATTACH 'host=localhost user=root port=0 database=mysqlscanner' AS msql (TYPE MYSQL_SCANNER)
+
+statement ok
+USE msql
+
+statement ok
+SET TimeZone='UTC'
+
+statement ok
+SET mysql_session_time_zone = '+01:00'
+
+query IIIIII
+SELECT * FROM datetime_tbl ORDER BY id
+----
+1	2020-02-03	2029-02-14 08:47:23	2029-02-14 14:47:23	23:59:59	1901
+2	1000-01-01	1000-01-01 00:00:00	1970-01-01 06:00:01	-838:59:59	2155
+3	9999-12-31	9999-12-31 23:59:59	2038-01-19 04:14:07	838:59:59	2000
+4	NULL	NULL	NULL	NULL	NULL
+
+query IIIIII
+SELECT typeof(COLUMNS(*)) FROM datetime_tbl LIMIT 1
+----
+INTEGER	DATE	TIMESTAMP	TIMESTAMP	VARCHAR	INTEGER
+
+statement ok
+CREATE OR REPLACE TABLE scan_datetime_1(col1 INTEGER, col2 DATE);
+
+statement ok
+INSERT INTO scan_datetime_1 VALUES (1, '2020-12-30'::DATE)
+
+query II
+SELECT * FROM scan_datetime_1 ORDER BY col1
+----
+1	2020-12-30
+
+statement ok
+UPDATE scan_datetime_1 SET col2 = '2020-12-31' WHERE col1 = 1
+
+query II
+SELECT * FROM scan_datetime_1 ORDER BY col1
+----
+1	2020-12-31
+
+query I
+SELECT * FROM mysql_query('msql', 'SELECT CAST(''0000-00-00'' AS DATE)')
+----
+NULL
+
+query I
+SELECT * FROM mysql_query('msql', 'SELECT CAST(''0000-00-00 00:00:00'' AS DATETIME)')
+----
+NULL
+
+# enable TIME type
+statement ok
+SET mysql_time_as_time = TRUE
+
+query I
+SELECT typeof(t) FROM datetime_tbl LIMIT 1
+----
+TIME
+
+query I
+SELECT t FROM datetime_tbl WHERE y = '1901'
+----
+23:59:59
+
+statement error
+SELECT t FROM datetime_tbl WHERE y = '2000'
+----
+Binder Error: time field value out of range, hour value: 838
+
+statement ok
+CREATE OR REPLACE TABLE scan_datetime_2(col1 INTEGER, col2 TIME);
+
+query I
+SELECT column_type FROM (
+  DESCRIBE SELECT * FROM scan_datetime_2
+)
+----
+INTEGER
+TIME
+
+statement ok
+INSERT INTO scan_datetime_2 VALUES (1, '12:43:56'::TIME), (2, '12:43:57')
+
+query II
+SELECT * FROM scan_datetime_2 ORDER BY col1
+----
+1	12:43:56
+2	12:43:57
+
+statement ok
+UPDATE scan_datetime_2 SET col2 = '12:43:58' WHERE col1 = 1
+
+statement ok
+UPDATE scan_datetime_2 SET col2 = '12:43:59'::TIME WHERE col1 = 2
+
+query II
+SELECT * FROM scan_datetime_2 ORDER BY col1
+----
+1	12:43:58
+2	12:43:59
+
+query I
+SELECT typeof(col2) FROM scan_datetime_2
+----
+TIME
+TIME
+
+query I
+SELECT * FROM mysql_query('msql', 'SELECT CAST(''00:00:00'' AS TIME)')
+----
+00:00:00
+
+# disable TIME type
+statement ok
+SET mysql_time_as_time = FALSE
+
+query I
+SELECT typeof(t) FROM datetime_tbl LIMIT 1
+----
+VARCHAR
+
+statement ok
+CREATE OR REPLACE TABLE scan_datetime_3(col1 INTEGER, col2 TIME);
+
+query I
+SELECT column_type FROM (
+  DESCRIBE SELECT * FROM scan_datetime_3
+)
+----
+INTEGER
+VARCHAR
+
+statement ok
+INSERT INTO scan_datetime_3 VALUES (1, '12:43:56'::TIME), (2, '12:43:57')
+
+query II
+SELECT * FROM scan_datetime_3 ORDER BY col1
+----
+1	12:43:56
+2	12:43:57
+
+query I
+SELECT typeof(col2) FROM scan_datetime_3
+----
+VARCHAR
+VARCHAR
+
+statement ok
+DROP TABLE IF EXISTS scan_datetime_3
+
+query I
+SELECT * FROM mysql_query('msql', 'SELECT CAST(''00:00:00'' AS TIME)')
+----
+00:00:00
