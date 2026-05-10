@@ -1,5 +1,5 @@
 
-# duckdb v1.4.2 (v1.4-andium)
+# duckdb v1.4.2 (v1.4-andium) - https://github.com/duckdb/duckdb-mysql/tree/v1.4-andium
 
 # compile env:
 /content/duckdb-mysql# ldd --version
