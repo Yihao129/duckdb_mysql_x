@@ -1,3 +1,8 @@
+
+# changes
+1. attach with multiple databses and only scan thoses datanases. database=db1,db2...
+
+
 # DuckDB MySQL extension
 
 The MySQL extension allows DuckDB to directly read and write data from a MySQL database instance. The data can be queried directly from the underlying MySQL database. Data can be loaded from MySQL tables into DuckDB tables, or vice versa.
