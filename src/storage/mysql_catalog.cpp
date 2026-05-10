@@ -27,7 +27,7 @@ MySQLCatalog::MySQLCatalog(AttachedDatabase &db_p, string connection_string_p, s
 	// Support comma-separated database list: database=db1,db2
 	// Trim whitespace from each database name
 	for (auto &db : databases) {
-		db = StringUtil::Trim(db);
+		StringUtil::Trim(db);
 	}
 	if (!databases.empty()) {
 		default_schema = databases[0];
