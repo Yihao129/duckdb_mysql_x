@@ -71,6 +71,7 @@ private:
 	MySQLSchemaSet schemas;
 	string default_schema;
 	vector<string> databases;
+	string connect_connection_string;
 	friend class MySQLSchemaSet;
 };
 

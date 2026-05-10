@@ -25,6 +25,7 @@ void MySQLSchemaSet::SetDatabases(vector<string> new_databases) {
 }
 
 vector<string> MySQLSchemaSet::GetDatabasesToScan() {
+	// Return specified databases if set, otherwise fallback to default_schema, otherwise scan all.
 	if (!databases.empty()) {
 		return databases;
 	}
@@ -51,6 +52,7 @@ FROM information_schema.schemata;
 			CreateEntry(std::move(schema));
 		}
 	} else {
+		// Filter schemas to only include the specified databases.
 		unordered_set<string> database_set(databases_to_scan.begin(), databases_to_scan.end());
 		auto query = R"(
 SELECT schema_name

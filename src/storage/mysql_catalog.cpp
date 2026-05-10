@@ -24,6 +24,8 @@ MySQLCatalog::MySQLCatalog(AttachedDatabase &db_p, string connection_string_p, s
 	unordered_set<string> unused;
 	std::tie(connection_params, unused) = MySQLUtils::ParseConnectionParameters(connection_string);
 	databases = StringUtil::Split(connection_params.db, ',');
+	// Support comma-separated database list: database=db1,db2
+	// Strip whitespace from each database name
 	for (auto &db : databases) {
 		db = StringUtil::Strip(db);
 	}
@@ -32,16 +34,15 @@ MySQLCatalog::MySQLCatalog(AttachedDatabase &db_p, string connection_string_p, s
 	}
 	schemas.SetDefaultSchema(default_schema);
 	schemas.SetDatabases(databases);
-	// try to connect with only the first database
-	MySQLTypeConfig type_config;
-	string connect_connection_string = connection_string;
+	connect_connection_string = connection_string;
 	if (!databases.empty()) {
+	// MySQL only supports connecting to one database at a time.
+	// Create a modified connection string with only the first database for mysql_real_connect.
 		auto pos = connection_string.find("database=");
 		if (pos != string::npos) {
 			auto end_pos = connection_string.find(';', pos);
 			string full_db_param = connection_string.substr(pos, end_pos - pos);
 			string new_db_param = "database=" + databases[0];
-			connect_connection_string = connection_string;
 			if (end_pos == string::npos) {
 				connect_connection_string.replace(pos, full_db_param.size(), new_db_param);
 			} else {
@@ -49,6 +50,7 @@ MySQLCatalog::MySQLCatalog(AttachedDatabase &db_p, string connection_string_p, s
 			}
 		}
 	}
+	MySQLTypeConfig type_config;
 	auto connection = MySQLConnection::Open(type_config, connect_connection_string, attach_path);
 }
 
