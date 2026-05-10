@@ -29,7 +29,7 @@ export VCPKG_TOOLCHAIN_PATH=$(pwd)/scripts/buildsystems/vcpkg.cmake
 
 # steps:
 1. pull code.
- cd /content/duckdb_mysql_x/ && git pull && rm -rf /content/duckdb-mysql/src/ && cp -r /content/duckdb_mysql_x/src/ /content/duckdb-mysql/ && cd /content/duckdb-mysql/
+cd /content/duckdb_mysql_x/ && git pull && rm -rf /content/duckdb-mysql/src/ && cp -r /content/duckdb_mysql_x/src/ /content/duckdb-mysql/ && cd /content/duckdb-mysql/
 
 
 
