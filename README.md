@@ -53,21 +53,17 @@ sudo apt-get install -y \
 
 ## Changes
 
-- Attach with multiple databases and only scan those databases: `database=db1,db2,...`
+- Attach with multiple databases and only scan those databases: `database=db1,db2,...`, db1 is set as default db.
 
 ## Build Steps
 
-1. Pull code:
-   ```bash
-   cd /content/duckdb_mysql_x/ && git pull && rm -rf /content/duckdb-mysql/src/ && cp -r /content/duckdb_mysql_x/src/ /content/duckdb-mysql/ && cd /content/duckdb-mysql/
-   ```
+```
+git clone git@github.com:Yihao129/duckdb_mysql_x.git
+git pull https://github.com/duckdb/duckdb-mysql.git -b v1.4-andium
 
-2. Load the extension:
-   ```sql
-   LOAD '/content/duckdb-mysql/build/release/extension/mysql_scanner/mysql_scanner.duckdb_extension';
-   ```
+cd /content/duckdb_mysql_x/ && git pull && rm -rf /content/duckdb-mysql/src/ && cp -r /content/duckdb_mysql_x/src/ /content/duckdb-mysql/ && cd /content/duckdb-mysql/
 
-3. Build:
-   ```bash
-   GEN=ninja make
-   ```
+cd /content/duckdb-mysql
+GEN=ninja make
+```
+
