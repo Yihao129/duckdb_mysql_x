@@ -23,6 +23,22 @@ git checkout ce613c41372b23b1f51333815feb3edd87ef8a8b
 export VCPKG_TOOLCHAIN_PATH=$(pwd)/scripts/buildsystems/vcpkg.cmake
 
 
+sudo apt-get update
+sudo apt-get install -y \
+  ninja-build \
+  cmake \
+  build-essential \
+  make \
+  ccache \
+  curl \
+  zip \
+  unzip \
+  tar \
+  pkg-config \
+  autoconf \
+  autoconf-archive \
+  mariadb-server 
+
 # changes
 1. attach with multiple databses and only scan thoses datanases. database=db1,db2...
 
@@ -31,9 +47,10 @@ export VCPKG_TOOLCHAIN_PATH=$(pwd)/scripts/buildsystems/vcpkg.cmake
 1. pull code.
 cd /content/duckdb_mysql_x/ && git pull && rm -rf /content/duckdb-mysql/src/ && cp -r /content/duckdb_mysql_x/src/ /content/duckdb-mysql/ && cd /content/duckdb-mysql/
 
+2.
+load  '/content/duckdb-mysql/build/release/extension/mysql_scanner/mysql_scanner.duckdb_extension';
 
 
-
-
+3. GEN=ninja make
 
 
